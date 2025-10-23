@@ -1,0 +1,30 @@
+poudriere_task:
+  matrix:
+    - name: FreeBSD 14.4-RELEASE
+      freebsd_instance:
+        image_family: freebsd-14-4-amd64-ufs
+      env:
+        VERSION: 14.4-RELEASE
+    - name: FreeBSD 15.0-RELEASE
+      freebsd_instance:
+        image_family: freebsd-15-0-amd64-ufs
+      env:
+        VERSION: 15.0-RELEASE
+
+  install_prerequisites_script:
+    - pkg install -y git poudriere-devel
+
+  poudriere_jail_script:
+    - poudriere jail -c -j jail -v $VERSION
+
+  poudriere_ports_script:
+    - poudriere ports -c -U https://git.freebsd.org/ports.git -B main -p latest
+    - poudriere ports -c -M $CIRRUS_WORKING_DIR -m null -p overlay
+
+  poudriere_bulk_script:
+    - mkdir -p /usr/ports/distfiles
+    - poudriere bulk -j jail -b latest -p latest -O overlay -f pkglist
+
+  always:
+    poudriere_artifacts:
+      path: /usr/local/poudriere/data/packages/jail-latest/logs/logs/openssh-portable-*
