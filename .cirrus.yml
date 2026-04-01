@@ -26,5 +26,9 @@ poudriere_task:
     - poudriere bulk -j jail -b latest -p latest -O overlay -f pkglist
 
   always:
+    poudriere_prepare_logs_script:
+      - mkdir $CIRRUS_WORKING_DIR/logs
+      - cp /usr/local/poudriere/data/packages/jail-latest/logs/logs/openssh-portable-* logs
+
     poudriere_artifacts:
-      path: /usr/local/poudriere/data/packages/jail-latest/logs/logs/openssh-portable-*
+      path: logs/**
