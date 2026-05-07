@@ -1,4 +1,5 @@
 poudriere_task:
+  timeout_in: 90m
   matrix:
     - name: FreeBSD 14.4-RELEASE
       freebsd_instance:
